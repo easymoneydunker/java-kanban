@@ -1,26 +1,26 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TaskManager {
     public static int idNumber = 1234567;
-    public static ArrayList<Task> tasks = new ArrayList<>();
+    public static HashMap<Integer, Task> tasks = new HashMap<>();
 
     public static int generateId() {
         return idNumber++;
     }
 
     public static void addTask(Task task) {
-        tasks.add(task);
+        tasks.put(generateId(), task);
     }
 
     public static void updateTaskById(int id, Task newTask) {
-        Task taskToUpdate = getTaskById(id);
-        if (taskToUpdate != null) {
-            taskToUpdate = newTask;
-        }
+        tasks.put(id, newTask);
     }
 
     public static void printTasks() {
-        tasks.forEach(System.out::println);
+        for (Integer id : tasks.keySet()) {
+            System.out.println(tasks.get(id));
+        }
     }
 
     public static void clearAllTasks() {
@@ -28,12 +28,7 @@ public class TaskManager {
     }
 
     public static Task getTaskById(int id) {
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                return task;
-            }
-        }
-        return null;
+        return tasks.get(id);
     }
 
     public static ArrayList<SubTask> getEpicTasksListById(int id) {
@@ -45,6 +40,6 @@ public class TaskManager {
     }
 
     public static void deleteTaskById(int id) {
-        tasks.remove(getTaskById(id));
+        tasks.remove(id);
     }
 }
