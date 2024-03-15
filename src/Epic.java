@@ -1,37 +1,52 @@
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Epic extends Task {
-    private ArrayList<SubTask> subTasks;
+    private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
 
     public Epic(String name, String description, Status status) {
         super(name, description, status);
+
     }
 
     public void addSubTask(SubTask subTask) {
-        subTasks.add(subTask);
+        subTasks.put(TaskManager.generateId(this), subTask);
+        isDone();
     }
 
-    public boolean isDone() {
-        for (SubTask subTask : subTasks) {
-            if (subTask.getStatus() != Status.DONE) {
-                return false;
+
+    public void updateSubTaskById(int id, SubTask newSubTask) {
+        subTasks.remove(newSubTask.getId());
+        subTasks.put(id, newSubTask);
+        isDone();
+    }
+
+    public void isDone() {
+        boolean isDone;
+        for (Integer id : subTasks.keySet()) {
+            if (subTasks.get(id).getStatus() != Status.DONE) {
+                return;
             }
         }
-        return true;
+        setStatus(Status.DONE);
     }
 
     @Override
     public String toString() {
-        return "Epic{" +
+        StringBuilder epic = new StringBuilder("Epic{" +
                 "name=" + getName() +
                 ", description=" + getDescription() +
                 ", id=" + getId() +
                 ", status=" + getStatus() +
-                ", subTasks=" + subTasks +
-                '}';
+                ", subTasks=");
+        for (Integer id : subTasks.keySet()) {
+            epic.append(subTasks.get(id).toString());
+        }
+        epic.append('}');
+        return epic.toString();
     }
 
-    public ArrayList<SubTask> getSubTasks() {
+    public HashMap<Integer, SubTask> getSubTasks() {
         return subTasks;
     }
 }
+

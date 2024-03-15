@@ -1,20 +1,31 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
-    public static int idNumber = 1234567;
+    public static int taskIdNumber = 1234567;
+    public static int subTaskIdNumber = 1;
+    public static int epicIdNumber = 7890276;
     public static HashMap<Integer, Task> tasks = new HashMap<>();
 
-    public static int generateId() {
-        return idNumber++;
+    public static void addTask(Task task) {
+        tasks.put(task.getId(), task);
     }
 
-    public static void addTask(Task task) {
-        tasks.put(generateId(), task);
+    public static void addSubTaskToEpic(Epic epic, SubTask subTask) {
+        epic.addSubTask(subTask);
+    }
+
+    public static void updateEpicSubTaskBySubTaskId(Epic epic, int id, SubTask newSubTask) {
+        if (id == newSubTask.getId())
+            epic.updateSubTaskById(id, newSubTask);
     }
 
     public static void updateTaskById(int id, Task newTask) {
-        tasks.put(id, newTask);
+        if (tasks.containsKey(newTask.getId())) {
+            tasks.remove(newTask.getId());
+            tasks.put(id, newTask);
+        } else {
+            tasks.put(id, newTask);
+        }
     }
 
     public static void printTasks() {
@@ -31,7 +42,7 @@ public class TaskManager {
         return tasks.get(id);
     }
 
-    public static ArrayList<SubTask> getEpicTasksListById(int id) {
+    public static HashMap<Integer, SubTask> getEpicTasksListById(int id) {
         Task epic = getTaskById(id);
         if (epic instanceof Epic) {
             return ((Epic) epic).getSubTasks();
@@ -41,5 +52,13 @@ public class TaskManager {
 
     public static void deleteTaskById(int id) {
         tasks.remove(id);
+    }
+
+    public static int generateId(Task task) {
+        if (task instanceof Epic) {
+            return epicIdNumber++;
+        } else if (task instanceof SubTask) {
+            return subTaskIdNumber++;
+        } else return taskIdNumber++;
     }
 }
