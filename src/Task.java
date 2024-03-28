@@ -3,14 +3,14 @@ import java.util.Objects;
 public class Task {
     private final String name;
     private final String description;
-    private final int id;
+    private int id = 0;
     private Status status;
+
 
     public Task(String name, String description, Status status) {
         this.name = name;
         this.description = description;
         this.status = status;
-        this.id = TaskManager.generateId(this);
     }
 
     public Task(String name, int id,  String description, Status status) {
@@ -65,4 +65,9 @@ public class Task {
         this.status = status;
     }
 
+    public void setId(int id) {
+        if (this.id == 0) {
+            this.id = id;
+        }
+    }
 }

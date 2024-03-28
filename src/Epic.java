@@ -9,7 +9,7 @@ public class Epic extends Task {
     }
 
     public void addSubTask(SubTask subTask) {
-        subTasks.put(TaskManager.generateId(this), subTask);
+        subTasks.put(subTask.getId(), subTask);
         isDone();
     }
 
@@ -41,7 +41,7 @@ public class Epic extends Task {
         for (Integer id : subTasks.keySet()) {
             epic.append(subTasks.get(id).toString());
         }
-        epic.append('}');
+        epic.append("}");
         return epic.toString();
     }
 

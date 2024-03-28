@@ -25,7 +25,7 @@ public class SubTask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", id=" + getId() +
                 ", status=" + getStatus() +
-                '}';
+                "}";
     }
 
 
