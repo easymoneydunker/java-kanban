@@ -24,8 +24,8 @@ public class Main {
 
         sub1 = new SubTask("Create method one", sub1.getId(), "Create money printing method 1", Status.DONE, epic);
         sub2 = new SubTask("Create method two", sub2.getId(), "Create money printing method 2", Status.DONE, epic);
-        taskManager.updateSubTaskById(sub1.getId(), sub1, epic);
-        taskManager.updateSubTaskById(sub2.getId(), sub2, epic);
+        taskManager.updateSubTask(sub1, epic);
+        taskManager.updateSubTask(sub2, epic);
 
         System.out.println(taskManager.getTasks());
         System.out.println(taskManager.getEpics());

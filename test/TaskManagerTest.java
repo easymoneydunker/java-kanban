@@ -9,16 +9,14 @@ public class TaskManagerTest {
     public void taskKeySetSizeShouldRemainTheSameAfterUpdatingTask() {
         taskManager = new TaskManager();
         taskManager.addTask(new Task("Task1", 123, "Task1", Status.NEW));
-        taskManager.updateTaskById(taskManager.getTasks().get(123).getId(),
-                new Task("Task1", 123, "Task1", Status.DONE));
+        taskManager.updateTask(new Task("Task1", 123, "Task1", Status.DONE));
         Assertions.assertEquals(1, taskManager.getTasks().keySet().size());
     }
     @Test
     public void taskValuesListSizeShouldRemainTheSameAfterUpdatingTask() {
         taskManager = new TaskManager();
         taskManager.addTask(new Task("Task1", 123, "Task1", Status.NEW));
-        taskManager.updateTaskById(taskManager.getTasks().get(123).getId(),
-                new Task("Task1", 123, "Task1", Status.DONE));
+        taskManager.updateTask(new Task("Task1", 123, "Task1", Status.DONE));
         Assertions.assertEquals(1, taskManager.getTasks().values().size());
     }
 
