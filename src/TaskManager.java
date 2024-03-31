@@ -51,6 +51,15 @@ public class TaskManager {
         subTasks.put(newSubTask.getId(), newSubTask);
     }
 
+    public void updateEpic(Epic epic) {
+        if (epics.containsKey(epic.getId())) {
+            epics.remove(epic.getId());
+            epics.put(epic.getId(), epic);
+        } else {
+            epics.put(epic.getId(), epic);
+        }
+    }
+
 
     public void clearAllTasks() {
         tasks.clear();
