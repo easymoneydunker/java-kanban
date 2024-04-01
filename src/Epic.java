@@ -13,10 +13,14 @@ public class Epic extends Task {
         isDone();
     }
 
+    public void removeSubTask(SubTask subTask) {
+        subTasks.remove(subTask.getId());
+    }
 
-    public void updateSubTaskById(int id, SubTask newSubTask) {
+
+    public void updateSubTask(SubTask newSubTask) {
         subTasks.remove(newSubTask.getId());
-        subTasks.put(id, newSubTask);
+        subTasks.put(newSubTask.getId(), newSubTask);
         isDone();
     }
 

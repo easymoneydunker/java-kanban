@@ -13,7 +13,7 @@ public class Task {
         this.status = status;
     }
 
-    public Task(String name, int id,  String description, Status status) {
+    public Task(String name, int id, String description, Status status) {
         this.name = name;
         this.id = id;
         this.description = description;
@@ -33,8 +33,18 @@ public class Task {
         return id;
     }
 
+    public void setId(int id) {
+        if (this.id == 0) {
+            this.id = id;
+        }
+    }
+
     public Status getStatus() {
         return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     @Override
@@ -53,21 +63,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", id=" + id +
-                ", status=" + status +
-                '}';
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public void setId(int id) {
-        if (this.id == 0) {
-            this.id = id;
-        }
+        return "Task{" + "name='" + name + '\'' + ", description='" + description + '\'' + ", id=" + id + ", status=" + status + '}';
     }
 }
