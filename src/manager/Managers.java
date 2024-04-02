@@ -1,5 +1,10 @@
+package manager;
+
+import historyManager.HistoryManager;
+import historyManager.InMemoryHistoryManager;
+
 public class Managers {
-    public TaskManager getDefault() {
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 

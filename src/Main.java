@@ -1,3 +1,9 @@
+import manager.InMemoryTaskManager;
+import task.Epic;
+import task.Status;
+import task.SubTask;
+import task.Task;
+
 public class Main {
 
     public static void main(String[] args) {

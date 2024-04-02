@@ -1,15 +1,22 @@
+package manager;
+
+import historyManager.HistoryManager;
+import task.Epic;
+import task.SubTask;
+import task.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> tasks = new HashMap<>();
     private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private final HashMap<Integer, Epic> epics = new HashMap<>();
+    private final HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
+    //как мне генерировать айдишники для тасок, если у меня следущие переменные будут константами?
     private int taskIdNumber = 1234567;
     private int subTaskIdNumber = 1;
     private int epicIdNumber = 7890276;
-    private final InMemoryHistoryManager inMemoryHistoryManager = new InMemoryHistoryManager();
 
     @Override
     public void addTask(Task task) {
@@ -71,7 +78,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-
     @Override
     public void clearAllTasks() {
         tasks.clear();
@@ -81,7 +87,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void clearAllSubTasks() {
         subTasks.clear();
         for (Epic epic : epics.values()) {
-            for (SubTask subTask : epic.getSubTasks().values()) {
+            for (SubTask subTask : epic.getSubTasks()) {
                 epic.removeSubTask(subTask);
             }
             epic.isDone();
@@ -113,7 +119,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public HashMap<Integer, SubTask> getEpicTasksListById(int id) {
+    public ArrayList<SubTask> getEpicTasksListById(int id) {
         Task epic = getTaskById(id);
         if (epic instanceof Epic) {
             return ((Epic) epic).getSubTasks();
@@ -133,13 +139,12 @@ public class InMemoryTaskManager implements TaskManager {
         subTasks.remove(id);
         epic.removeSubTask(subTask);
         epic.isDone();
-
     }
 
     @Override
     public void deleteEpicById(int id) {
         Epic epic = epics.get(id);
-        for (SubTask subTask : epic.getSubTasks().values()) {
+        for (SubTask subTask : epic.getSubTasks()) {
             subTasks.remove(subTask.getId());
         }
         epics.remove(id);

@@ -1,4 +1,10 @@
+import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.*;
+import task.Epic;
+import task.Status;
+import task.SubTask;
+import task.Task;
+
 public class InMemoryTaskManagerTest {
     static InMemoryTaskManager inMemoryTaskManager;
     @BeforeEach
@@ -20,7 +26,7 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void SubTaskKeySetSizeShouldRemainTheSameAfterUpdatingTask() {
-        Epic epic = new Epic("Epic", "Epic", Status.NEW);
+        Epic epic = new Epic("task.Epic", "task.Epic", Status.NEW);
         inMemoryTaskManager.addTask(epic);
         SubTask subTask = new SubTask("Sub", "Sub", Status.NEW, epic);
         inMemoryTaskManager.addTask(subTask);
@@ -30,7 +36,7 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void SubTaskValueListSizeShouldRemainTheSameAfterUpdatingTask() {
-        Epic epic = new Epic("Epic", "Epic", Status.NEW);
+        Epic epic = new Epic("task.Epic", "task.Epic", Status.NEW);
         inMemoryTaskManager.addTask(epic);
         SubTask subTask = new SubTask("Sub", "Sub", Status.NEW, epic);
         inMemoryTaskManager.addTask(subTask);
@@ -40,7 +46,7 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void EpicSubTasksShoulBeClearedOnAllSubTasksClear() {
-        Epic epic = new Epic("Epic", "Epic", Status.NEW);
+        Epic epic = new Epic("task.Epic", "task.Epic", Status.NEW);
         inMemoryTaskManager.addTask(epic);
         SubTask subTask = new SubTask("Sub", "Sub", Status.NEW, epic);
         inMemoryTaskManager.addTask(subTask);
@@ -51,7 +57,7 @@ public class InMemoryTaskManagerTest {
     }
     @Test
     public void SubTasksShouldBeDeletedOnEpicRemove() {
-        Epic epic = new Epic("Epic", "Epic", Status.NEW);
+        Epic epic = new Epic("task.Epic", "task.Epic", Status.NEW);
         inMemoryTaskManager.addTask(epic);
         SubTask subTask = new SubTask("Sub", "Sub", Status.NEW, epic);
         inMemoryTaskManager.addTask(subTask);

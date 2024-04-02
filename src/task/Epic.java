@@ -1,15 +1,17 @@
-import java.util.HashMap;
+package task;
+
+import java.util.ArrayList;
 
 public class Epic extends Task {
-    private final HashMap<Integer, SubTask> subTasks = new HashMap<>();
+    private final ArrayList<SubTask> subTasks;
 
     public Epic(String name, String description, Status status) {
         super(name, description, status);
-
+        subTasks = new ArrayList<>();
     }
 
     public void addSubTask(SubTask subTask) {
-        subTasks.put(subTask.getId(), subTask);
+        subTasks.add(subTask);
         isDone();
     }
 
@@ -19,15 +21,16 @@ public class Epic extends Task {
 
 
     public void updateSubTask(SubTask newSubTask) {
-        subTasks.remove(newSubTask.getId());
-        subTasks.put(newSubTask.getId(), newSubTask);
+        subTasks.remove(newSubTask);
+        subTasks.add(newSubTask);
         isDone();
     }
 
     public void isDone() {
         boolean isDone;
-        for (Integer id : subTasks.keySet()) {
-            if (subTasks.get(id).getStatus() != Status.DONE) {
+        for (SubTask subTask : subTasks) {
+            if (subTask.getStatus() != Status.DONE) {
+                setStatus(Status.IN_PROGRESS);
                 return;
             }
         }
@@ -36,20 +39,20 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        StringBuilder epic = new StringBuilder("Epic{" +
+        StringBuilder epic = new StringBuilder("task.Epic{" +
                 "name=" + getName() +
                 ", description=" + getDescription() +
                 ", id=" + getId() +
                 ", status=" + getStatus() +
                 ", subTasks=");
-        for (Integer id : subTasks.keySet()) {
-            epic.append(subTasks.get(id).toString());
+        for (SubTask subTask : subTasks) {
+            epic.append(subTask.toString());
         }
         epic.append("}");
         return epic.toString();
     }
 
-    public HashMap<Integer, SubTask> getSubTasks() {
+    public ArrayList<SubTask> getSubTasks() {
         return subTasks;
     }
 }

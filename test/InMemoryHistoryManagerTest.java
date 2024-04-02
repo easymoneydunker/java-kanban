@@ -1,6 +1,11 @@
+import historyManager.InMemoryHistoryManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import task.Epic;
+import task.Status;
+import task.SubTask;
+import task.Task;
 
 public class InMemoryHistoryManagerTest {
     InMemoryHistoryManager inMemoryHistoryManager;

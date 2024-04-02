@@ -1,3 +1,10 @@
+package manager;
+
+import task.Epic;
+import task.SubTask;
+import task.Task;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface TaskManager {
@@ -29,7 +36,7 @@ public interface TaskManager {
 
     Epic getEpicById(int id);
 
-    HashMap<Integer, SubTask> getEpicTasksListById(int id);
+    ArrayList<SubTask> getEpicTasksListById(int id);
 
     void deleteTaskById(int id);
 
