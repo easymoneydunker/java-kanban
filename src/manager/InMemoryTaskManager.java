@@ -1,6 +1,6 @@
 package manager;
 
-import historyManager.HistoryManager;
+import HistoryManager.HistoryManager;
 import task.Epic;
 import task.SubTask;
 import task.Task;

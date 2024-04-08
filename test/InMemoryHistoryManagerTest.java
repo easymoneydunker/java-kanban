@@ -1,4 +1,4 @@
-import historyManager.InMemoryHistoryManager;
+import HistoryManager.InMemoryHistoryManager;
 import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
