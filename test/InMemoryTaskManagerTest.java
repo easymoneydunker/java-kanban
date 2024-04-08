@@ -1,5 +1,7 @@
 import manager.InMemoryTaskManager;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.Status;
 import task.SubTask;
@@ -7,16 +9,19 @@ import task.Task;
 
 public class InMemoryTaskManagerTest {
     static InMemoryTaskManager inMemoryTaskManager;
+
     @BeforeEach
     void beforeEach() {
         inMemoryTaskManager = new InMemoryTaskManager();
     }
+
     @Test
     public void taskKeySetSizeShouldRemainTheSameAfterUpdatingTask() {
         inMemoryTaskManager.addTask(new Task("Task1", 123, "Task1", Status.NEW));
         inMemoryTaskManager.updateTask(new Task("Task1", 123, "Task1", Status.DONE));
         Assertions.assertEquals(1, inMemoryTaskManager.getTasks().keySet().size());
     }
+
     @Test
     public void taskValuesListSizeShouldRemainTheSameAfterUpdatingTask() {
         inMemoryTaskManager.addTask(new Task("Task1", 123, "Task1", Status.NEW));
@@ -55,6 +60,7 @@ public class InMemoryTaskManagerTest {
         inMemoryTaskManager.clearAllSubTasks();
         Assertions.assertEquals(epic.getSubTasks().size(), 0);
     }
+
     @Test
     public void SubTasksShouldBeDeletedOnEpicRemove() {
         Epic epic = new Epic("task.Epic", "task.Epic", Status.NEW);

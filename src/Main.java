@@ -1,17 +1,12 @@
-import historyManager.InMemoryHistoryManager;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import task.Epic;
 import task.Status;
 import task.SubTask;
-import task.Task;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Main {
     static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
+
     public static void main(String[] args) {
         Epic epic = new Epic("epic1", "epic1", Status.NEW);
         SubTask sub1 = new SubTask("sub1", "sub1", Status.NEW, epic);

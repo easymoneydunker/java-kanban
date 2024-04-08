@@ -3,9 +3,7 @@ import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import task.Epic;
 import task.Status;
-import task.SubTask;
 import task.Task;
 
 public class InMemoryHistoryManagerTest {
@@ -24,7 +22,9 @@ public class InMemoryHistoryManagerTest {
         Assertions.assertEquals(expected, inMemoryHistoryManager.getLastTask());
     }
 
-    /** Add four elements, then delete one*/
+    /**
+     * Add four elements, then delete one
+     */
     @Test
     void historyManagerSizeShouldBeThreeAfterAddingThreeElements() {
         InMemoryTaskManager taskManager = new InMemoryTaskManager();

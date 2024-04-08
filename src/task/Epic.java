@@ -39,12 +39,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        StringBuilder epic = new StringBuilder("task.Epic{" +
-                "name=" + getName() +
-                ", description=" + getDescription() +
-                ", id=" + getId() +
-                ", status=" + getStatus() +
-                ", subTasks=");
+        StringBuilder epic = new StringBuilder("task.Epic{" + "name=" + getName() + ", description=" + getDescription() + ", id=" + getId() + ", status=" + getStatus() + ", subTasks=");
         for (SubTask subTask : subTasks) {
             epic.append(subTask.toString());
         }

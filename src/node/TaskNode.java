@@ -15,28 +15,28 @@ public class TaskNode {
         this.task = task;
     }
 
-    public void setNext(TaskNode next) {
-        this.next = next;
-    }
-
-    public void setPrevious(TaskNode previous) {
-        this.previous = previous;
-    }
-
-    public void setTask(Task task) {
-        this.task = task;
-    }
-
     public TaskNode getNext() {
         return next;
+    }
+
+    public void setNext(TaskNode next) {
+        this.next = next;
     }
 
     public TaskNode getPrevious() {
         return previous;
     }
 
+    public void setPrevious(TaskNode previous) {
+        this.previous = previous;
+    }
+
     public Task getTask() {
         return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
     }
 
     @Override
@@ -54,8 +54,6 @@ public class TaskNode {
 
     @Override
     public String toString() {
-        return "TaskNode{" +
-                ", task=" + task +
-                '}';
+        return "TaskNode{" + ", task=" + task + '}';
     }
 }
