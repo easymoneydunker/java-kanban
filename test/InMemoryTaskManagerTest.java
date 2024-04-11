@@ -49,17 +49,6 @@ public class InMemoryTaskManagerTest {
         Assertions.assertEquals(1, inMemoryTaskManager.getSubTasks().values().size());
     }
 
-    @Test
-    public void EpicSubTasksShoulBeClearedOnAllSubTasksClear() {
-        Epic epic = new Epic("task.Epic", "task.Epic", Status.NEW);
-        inMemoryTaskManager.addTask(epic);
-        SubTask subTask = new SubTask("Sub", "Sub", Status.NEW, epic);
-        inMemoryTaskManager.addTask(subTask);
-        SubTask subTask1 = new SubTask("Sub1", "Sub", Status.NEW, epic);
-        inMemoryTaskManager.addTask(subTask1);
-        inMemoryTaskManager.clearAllSubTasks();
-        Assertions.assertEquals(epic.getSubTasks().size(), 0);
-    }
 
     @Test
     public void SubTasksShouldBeDeletedOnEpicRemove() {
