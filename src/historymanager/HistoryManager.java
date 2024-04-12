@@ -12,4 +12,6 @@ public interface HistoryManager {
     List<Task> getHistory();
 
     boolean containsId(int id);
+
+    public Task getLastTask();
 }
