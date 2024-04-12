@@ -90,6 +90,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         history.remove(task.getId());
     }
+
     @Override
     public Task getLastTask() {
         return tail.getTask();
