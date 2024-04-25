@@ -52,13 +52,12 @@ public class Task {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Task task = (Task) o;
-        if (id == task.id) return true;
-        return Objects.equals(name, task.name) && Objects.equals(description, task.description) && status == task.status;
+        return getId() == task.getId() && getName().equals(task.getName()) && getDescription().equals(task.getDescription()) && getStatus() == task.getStatus();
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, id, status);
+        return Objects.hash(getName(), getDescription(), getId(), getStatus());
     }
 
     @Override
