@@ -1,4 +1,5 @@
 id,type,name,status,description,epic
-2,TASK,Task,IN_PROGRESS,Task
-1,EPIC,Epic,IN_PROGRESS,Epic
-3,SUB_TASK,Sub,NEW,Sub,1
+123,task.task,Task1,NEW,Task1,17.05.2024 12:47,9000
+1,task.epic,Epic,DONE,Epic,15.05.2024 12:47,600
+123465,task.subtask,Sub2,DONE,Sub2,14.05.2024 12:47,800,1
+12345,task.subtask,Sub,DONE,Sub1,13.05.2024 12:47,400,1

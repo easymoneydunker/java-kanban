@@ -1,5 +1,6 @@
 import manager.InMemoryTaskManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Epic;
@@ -7,8 +8,19 @@ import task.Status;
 import task.SubTask;
 import task.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class InMemoryTaskManagerTest {
     static InMemoryTaskManager inMemoryTaskManager;
+    static LocalDateTime startTime;
+    static Duration duration;
+
+    @BeforeAll
+    static void beforeAll() {
+        startTime = LocalDateTime.now();
+        duration = Duration.ofDays(2);
+    }
 
     @BeforeEach
     void beforeEach() {
@@ -17,15 +29,15 @@ public class InMemoryTaskManagerTest {
 
     @Test
     public void taskKeySetSizeShouldRemainTheSameAfterUpdatingTask() {
-        inMemoryTaskManager.addTask(new Task("Task1", 123, "Task1", Status.NEW));
-        inMemoryTaskManager.updateTask(new Task("Task1", 123, "Task1", Status.DONE));
+        inMemoryTaskManager.addTask(new Task("Task1", 123, "Task1", Status.NEW, startTime, duration));
+        inMemoryTaskManager.updateTask(new Task("Task1", 123, "Task1", Status.DONE, startTime.plusDays(5), duration.minusHours(3)));
         Assertions.assertEquals(1, inMemoryTaskManager.getTasks().keySet().size());
     }
 
     @Test
     public void taskValuesListSizeShouldRemainTheSameAfterUpdatingTask() {
-        inMemoryTaskManager.addTask(new Task("Task1", 123, "Task1", Status.NEW));
-        inMemoryTaskManager.updateTask(new Task("Task1", 123, "Task1", Status.DONE));
+        inMemoryTaskManager.addTask(new Task("Task1", 123, "Task1", Status.NEW, startTime, duration));
+        inMemoryTaskManager.updateTask(new Task("Task1", 123, "Task1", Status.DONE, startTime.plusDays(2), duration.minusHours(3)));
         Assertions.assertEquals(1, inMemoryTaskManager.getTasks().values().size());
     }
 
@@ -33,9 +45,9 @@ public class InMemoryTaskManagerTest {
     public void SubTaskKeySetSizeShouldRemainTheSameAfterUpdatingTask() {
         Epic epic = new Epic("task.Epic", "task.Epic", Status.NEW);
         inMemoryTaskManager.addTask(epic);
-        SubTask subTask = new SubTask("Sub", "Sub", Status.NEW, epic);
+        SubTask subTask = new SubTask("Sub", 123456,"Sub", Status.NEW, epic, LocalDateTime.now(), Duration.ofMinutes(60));
         inMemoryTaskManager.addTask(subTask);
-        inMemoryTaskManager.updateEpicSubTask(epic, new SubTask("Sub", "Sub1", Status.DONE, epic));
+        inMemoryTaskManager.updateSubTask(new SubTask("Updated", 123456,"Sub", Status.NEW, epic, LocalDateTime.now(), Duration.ofMinutes(60)), epic);
         Assertions.assertEquals(1, inMemoryTaskManager.getSubTasks().keySet().size());
     }
 
@@ -43,9 +55,9 @@ public class InMemoryTaskManagerTest {
     public void SubTaskValueListSizeShouldRemainTheSameAfterUpdatingTask() {
         Epic epic = new Epic("task.Epic", "task.Epic", Status.NEW);
         inMemoryTaskManager.addTask(epic);
-        SubTask subTask = new SubTask("Sub", "Sub", Status.NEW, epic);
+        SubTask subTask = new SubTask("Sub", 123456,"Sub", Status.NEW, epic, LocalDateTime.now(), Duration.ofMinutes(60));
         inMemoryTaskManager.addTask(subTask);
-        inMemoryTaskManager.updateEpicSubTask(epic, new SubTask("Sub", "Sub1", Status.DONE, epic));
+        inMemoryTaskManager.updateSubTask(new SubTask("Updated", 123456,"Sub", Status.IN_PROGRESS, epic, LocalDateTime.now(), Duration.ofMinutes(60)), epic);
         Assertions.assertEquals(1, inMemoryTaskManager.getSubTasks().values().size());
     }
 

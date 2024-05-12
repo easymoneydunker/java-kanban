@@ -4,10 +4,18 @@ import task.*;
 
 import java.io.*;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final String filePath;
+    private final TreeSet<Task> taskTreeSet = new TreeSet<>((task1, task2) -> task1.getEndTime().compareTo(task2.getEndTime()));
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
+
 
     public FileBackedTaskManager(String filePath) {
         this.filePath = filePath;
@@ -22,9 +30,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     public static FileBackedTaskManager loadFromFile(File file) {
-        FileBackedTaskManager manager = new FileBackedTaskManager();
+        FileBackedTaskManager manager = new FileBackedTaskManager(file.toPath());
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            reader.readLine(); // skips "id,type,name,status,description,epic" line
+            reader.readLine(); // skips "id,type,name,status,description,startTime,duration,epic" line
             while (reader.ready()) {
                 Task task = manager.fromString(reader.readLine());
                 if (task instanceof Epic epic) {
@@ -44,32 +52,54 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     @Override
     public void addTask(Task task) {
         super.addTask(task);
-        save();
+        taskTreeSet.add(task);
     }
 
     @Override
     public void addTask(Epic epic) {
         super.addTask(epic);
-        save();
+        taskTreeSet.add(epic);
     }
 
     @Override
     public void addTask(SubTask subTask) {
         super.addTask(subTask);
-        save();
     }
 
-    public void save() {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+    public void save(Path path) {
+        //id,type,name,status,description,startTime,duration,epic
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path.toFile()))) {
             bw.write("id,type,name,status,description,epic\n");
             for (Map.Entry<Integer, Task> taskEntry : super.getTasks().entrySet()) {
-                bw.write(taskEntry.getValue().getId() + "," + TaskType.TASK + "," + taskEntry.getValue().getName() + "," + taskEntry.getValue().getStatus() + "," + taskEntry.getValue().getDescription() + "\n");
+                String stringBuilder = taskEntry.getValue().getId() + "," +  //id
+                        taskEntry.getValue().getClass().getName().toLowerCase() + "," + //type
+                        taskEntry.getValue().getName() + "," + //name
+                        taskEntry.getValue().getStatus() + "," + //status
+                        taskEntry.getValue().getDescription() + "," + //description
+                        taskEntry.getValue().getStartTime().format(formatter) + "," + //start time
+                        taskEntry.getValue().getDuration().toMinutes() + "\n"; //duration
+                bw.write(stringBuilder);
             }
             for (Map.Entry<Integer, Epic> taskEntry : super.getEpics().entrySet()) {
-                bw.write(taskEntry.getValue().getId() + "," + TaskType.EPIC + "," + taskEntry.getValue().getName() + "," + taskEntry.getValue().getStatus() + "," + taskEntry.getValue().getDescription() + "\n");
+                String stringBuilder = taskEntry.getValue().getId() + "," +  //id
+                        taskEntry.getValue().getClass().getName().toLowerCase() + "," + //type
+                        taskEntry.getValue().getName() + "," + //name
+                        taskEntry.getValue().getStatus() + "," + //status
+                        taskEntry.getValue().getDescription() + "," + //description
+                        taskEntry.getValue().getStartTime().format(formatter) + "," + //start time
+                        taskEntry.getValue().getDuration().toMinutes() + "\n"; //duration
+                bw.write(stringBuilder);
             }
             for (Map.Entry<Integer, SubTask> taskEntry : super.getSubTasks().entrySet()) {
-                bw.write(taskEntry.getValue().getId() + "," + TaskType.SUB_TASK + "," + taskEntry.getValue().getName() + "," + taskEntry.getValue().getStatus() + "," + taskEntry.getValue().getDescription() + "," + taskEntry.getValue().getEpicId() + "\n");
+                String stringBuilder = taskEntry.getValue().getId() + "," +  //id
+                        taskEntry.getValue().getClass().getName().toLowerCase() + "," + //type
+                        taskEntry.getValue().getName() + "," + //name
+                        taskEntry.getValue().getStatus() + "," + //status
+                        taskEntry.getValue().getDescription() + "," + //description
+                        taskEntry.getValue().getStartTime().format(formatter) + "," + //start time
+                        taskEntry.getValue().getDuration().toMinutes() + "," + //duration
+                        taskEntry.getValue().getEpicId() + "\n";
+                bw.write(stringBuilder);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -78,51 +108,64 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     private String taskToString(Task task) {
-        return task.getId() + "," + TaskType.TASK + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() +
-                "\n";
+        return task.getId() + "," + TaskType.TASK + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "\n";
     }
 
     private String taskToString(Epic task) {
-        return task.getId() + "," + TaskType.EPIC + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() +
-                "\n";
+        return task.getId() + "," + TaskType.EPIC + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "\n";
     }
 
     private String taskToString(SubTask task) {
-        return task.getId() + "," + TaskType.SUB_TASK + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + task.getEpicId() +
-                "\n";
+        return task.getId() + "," + TaskType.SUB_TASK + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + task.getEpicId() + "\n";
     }
 
     private Task fromString(String string) {
-        String[] fields = string.split(",");
+        String[] fields = string.split(","); //id,type,name,status,description,startTime,duration,epic
         TaskType type = null;
         Status status = null;
         Epic epic = null;
-        if (fields[1].equalsIgnoreCase("task")) {
+        LocalDateTime startTime = null;
+        String description = null;
+        Duration duration = null;
+        String name = null;
+
+        int id = Integer.parseInt(fields[0]);
+        String statusField = fields[3].toUpperCase();
+        name = fields[2];
+        if (fields[1].equalsIgnoreCase("task") || fields[1].equalsIgnoreCase("task.task")) {
             type = TaskType.TASK;
-        } else if (fields[1].equalsIgnoreCase("epic")) {
+        } else if (fields[1].equalsIgnoreCase("epic") || fields[1].equalsIgnoreCase("task.epic")) {
             type = TaskType.EPIC;
-        } else if (fields[1].equalsIgnoreCase("sub_task")) {
+        } else if (fields[1].equalsIgnoreCase("subtask") || fields[1].equalsIgnoreCase("task.subtask")) {
             type = TaskType.SUB_TASK;
-            epic = getEpics().get(Integer.parseInt(fields[5]));
+            epic = getEpics().get(Integer.parseInt(fields[7]));
         }
-        if (fields[3].equalsIgnoreCase("new")) {
-            status = Status.NEW;
-        } else if (fields[3].equalsIgnoreCase("done")) {
-            status = Status.DONE;
-        } else if (fields[3].equalsIgnoreCase("in_progress")) {
-            status = Status.IN_PROGRESS;
+        switch (statusField) {
+            case "NEW" -> status = Status.NEW;
+            case "DONE" -> status = Status.DONE;
+            case "IN_PROGRESS" -> status = Status.IN_PROGRESS;
+            default -> throw new IllegalArgumentException("Unrecognized status: " + fields[3]);
         }
+
+        description = fields[4];
+        startTime = LocalDateTime.parse(fields[5], formatter);
+        duration = Duration.ofMinutes(Integer.parseInt(fields[6]));
         switch (type) {
             case TASK -> {
-                return new Task(fields[2], Integer.parseInt(fields[0]), fields[4], status);
+                return new Task(name, id, description, status, startTime, duration);
             }
             case EPIC -> {
-                return new Epic(fields[2], Integer.parseInt(fields[0]), fields[4], status);
+                return new Epic(name, id, description, status, startTime, duration);
             }
             case SUB_TASK -> {
-                return new SubTask(fields[2], Integer.parseInt(fields[0]), fields[4], status, epic);
+                return new SubTask(name, id, description, status, epic, startTime, duration);
             }
         }
         return null;
+    }
+
+    @Override
+    public Set<Task> getPrioritizedTasks() {
+        return taskTreeSet;
     }
 }
