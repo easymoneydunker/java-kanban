@@ -6,12 +6,14 @@ import org.junit.jupiter.api.Test;
 import task.Status;
 import task.Task;
 
-public class InMemoryHistoryManagerTest {
+public class InMemoryHistoryManagerTest extends TaskManagerTest<InMemoryTaskManager> {
     InMemoryHistoryManager inMemoryHistoryManager;
+    InMemoryTaskManager taskManager;
 
     @BeforeEach
     public void beforeEach() {
         inMemoryHistoryManager = new InMemoryHistoryManager();
+        taskManager = new InMemoryTaskManager();
     }
 
     @Test
@@ -27,11 +29,6 @@ public class InMemoryHistoryManagerTest {
      */
     @Test
     void historyManagerSizeShouldBeThreeAfterAddingThreeElements() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-        var task1 = new Task("AAA", "AAA", Status.NEW);
-        var task2 = new Task("BBB", "BBB", Status.IN_PROGRESS);
-        var task3 = new Task("CCC", "CCC", Status.DONE);
-        var task4 = new Task("DDD", "DDD", Status.DONE);
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.addTask(task3);
@@ -40,8 +37,19 @@ public class InMemoryHistoryManagerTest {
         inMemoryHistoryManager.add(task2);
         inMemoryHistoryManager.add(task3);
         inMemoryHistoryManager.add(task4);
-        inMemoryHistoryManager.remove(task3);
+        inMemoryHistoryManager.remove(task3); // remove from the middle
         Assertions.assertEquals(3, inMemoryHistoryManager.getHistory().size());
+    }
 
+    @Test
+    void historyShouldBeEmptyWithoutAddingTasks() {
+        Assertions.assertEquals(0, inMemoryHistoryManager.getHistory().size());
+    }
+
+    @Test
+    void historyManagerDoesNotDuplicateTasks() {
+        inMemoryHistoryManager.add(task1);
+        inMemoryHistoryManager.add(task1);
+        Assertions.assertEquals(1, inMemoryHistoryManager.getHistory().size());
     }
 }
