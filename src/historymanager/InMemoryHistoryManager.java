@@ -24,13 +24,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     private void linkLast(Task task) {
         final TaskNode oldTail = tail;
         final TaskNode newNode = new TaskNode(oldTail, null, task);
-        if (oldTail == null) {
+        if (head == null) {
             head = newNode;
-            tail = newNode;
-            head.setNext(tail);
         } else {
-            tail.setNext(newNode);
-            newNode.setPrevious(tail);
+            oldTail.setNext(newNode);
         }
         tail = newNode;
         history.put(task.getId(), newNode);
@@ -39,36 +36,30 @@ public class InMemoryHistoryManager implements HistoryManager {
     private List<Task> getTasks() {
         List<Task> list = new ArrayList<>();
         TaskNode currentNode = head;
-        list.add(currentNode.getTask());
-        while (currentNode.getNext() != null) {
-            currentNode = currentNode.getNext();
+        while (currentNode != null) {
             list.add(currentNode.getTask());
+            currentNode = currentNode.getNext();
         }
         return list;
     }
 
     private void removeNode(TaskNode taskNode) {
-        TaskNode newNext = null;
-        TaskNode newPrev = null;
-        if (taskNode.getNext() != null) {
-            newNext = history.get(taskNode.getNext().getTask().getId());
+        if (taskNode == null) return;
+        TaskNode prev = taskNode.getPrevious();
+        TaskNode next = taskNode.getNext();
+
+        if (prev != null) {
+            prev.setNext(next);
+        } else {
+            head = next;
         }
-        if (taskNode.getPrevious() != null) {
-            newPrev = history.get(taskNode.getPrevious().getTask().getId());
+
+        if (next != null) {
+            next.setPrevious(prev);
+        } else {
+            tail = prev;
         }
-        if (taskNode.equals(head)) {
-            head.getNext().setPrevious(null);
-            head = head.getNext();
-        } else if (taskNode.equals(tail)) {
-            tail.getPrevious().setNext(null);
-            tail = tail.getPrevious();
-        }
-        if (history.get(taskNode.getTask().getId()).getPrevious() != null) {
-            history.get(taskNode.getTask().getId()).getPrevious().setNext(newNext);
-        }
-        if (history.get(taskNode.getTask().getId()).getNext() != null) {
-            history.get(taskNode.getTask().getId()).getNext().setPrevious(newPrev);
-        }
+
         history.remove(taskNode.getTask().getId());
     }
 
@@ -84,16 +75,15 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void remove(Task task) {
         TaskNode taskNode = history.get(task.getId());
-        if (taskNode != null) {
-            removeNode(taskNode);
-        }
-
-        history.remove(task.getId());
+        removeNode(taskNode);
     }
 
     @Override
     public Task getLastTask() {
-        return tail.getTask();
+        if (tail != null) {
+            return tail.getTask();
+        }
+        return null;
     }
 
     public boolean containsId(int id) {

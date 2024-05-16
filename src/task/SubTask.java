@@ -1,5 +1,7 @@
 package task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class SubTask extends Task {
@@ -9,6 +11,11 @@ public class SubTask extends Task {
         super(name, description, status);
         this.epic = epic;
         this.epic.updateSubTask(this);
+    }
+
+    public SubTask(String name, int id, String description, Status status, Epic epic, LocalDateTime startTime, Duration duration) {
+        super(name, id, description, status, startTime, duration);
+        this.epic = epic;
     }
 
     public SubTask(String name, int id, String description, Status status, Epic epic) {
@@ -37,6 +44,7 @@ public class SubTask extends Task {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), epic);
+        return Objects.hash(super.getName(), super.getDescription(), super.getId(), super.getStatus(), epic);
     }
+
 }

@@ -5,7 +5,7 @@ import task.Status;
 import task.SubTask;
 
 public class Main {
-    static InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
+    static final InMemoryTaskManager inMemoryTaskManager = (InMemoryTaskManager) Managers.getDefault();
 
     public static void main(String[] args) {
         Epic epic = new Epic("epic1", "epic1", Status.NEW);

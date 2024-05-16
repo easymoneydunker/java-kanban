@@ -13,5 +13,5 @@ public interface HistoryManager {
 
     boolean containsId(int id);
 
-    public Task getLastTask();
+    Task getLastTask();
 }
