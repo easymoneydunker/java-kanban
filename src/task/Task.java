@@ -2,6 +2,7 @@ package task;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -11,7 +12,7 @@ public class Task {
     private Status status;
     private Duration duration;
     private LocalDateTime startTime;
-
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
 
     public Task(String name, String description, Status status) {
         this.name = name;
@@ -22,6 +23,14 @@ public class Task {
     public Task(String name, int id, String description, Status status, LocalDateTime startTime, Duration duration) {
         this.name = name;
         this.id = id;
+        this.description = description;
+        this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public Task(String name, String description, Status status, LocalDateTime startTime, Duration duration) {
+        this.name = name;
         this.description = description;
         this.status = status;
         this.startTime = startTime;
@@ -61,6 +70,14 @@ public class Task {
         this.status = status;
     }
 
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -81,11 +98,9 @@ public class Task {
         if (duration != null && startTime != null) {
             return startTime.plusSeconds(duration.getSeconds());
         } else {
-            // Handle the case when duration or startTime is null
-            return null; // Or throw an exception, depending on your requirements
+            return null;
         }
     }
-
 
     @Override
     public int hashCode() {
@@ -94,6 +109,17 @@ public class Task {
 
     @Override
     public String toString() {
-        return "task.Task{" + "name='" + name + '\'' + ", description='" + description + '\'' + ", id=" + id + ", status=" + status + '}';
+        String str = "Task{" +
+                "name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", status=" + status;
+        if (Objects.nonNull(duration)) {
+            str += ", duration=" + duration;
+        }
+        if (Objects.nonNull(startTime)) {
+            str += ", startTime=" + startTime.format(dtf);
+        }
+        return str + '}';
     }
 }
