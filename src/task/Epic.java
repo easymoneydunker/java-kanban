@@ -19,9 +19,9 @@ public class Epic extends Task {
             if (endTime1 == null && endTime2 == null) {
                 return 0;
             } else if (endTime1 == null) {
-                return -1; // Treat null as smaller than non-null
+                return -1;
             } else if (endTime2 == null) {
-                return 1; // Treat null as smaller than non-null
+                return 1;
             } else {
                 return endTime1.compareTo(endTime2);
             }
@@ -31,6 +31,12 @@ public class Epic extends Task {
 
     public Epic(String name, int id, String description, Status status, LocalDateTime startTime, Duration duration) {
         super(name, id, description, status, startTime, duration);
+        sortedSubTasks = new TreeSet<>((sub1, sub2) -> sub1.getEndTime().compareTo(sub2.getEndTime()));
+        allSubTasks = new HashSet<>();
+    }
+
+    public Epic(String name, String description, Status status, LocalDateTime startTime, Duration duration) {
+        super(name, description, status, startTime, duration);
         sortedSubTasks = new TreeSet<>((sub1, sub2) -> sub1.getEndTime().compareTo(sub2.getEndTime()));
         allSubTasks = new HashSet<>();
     }

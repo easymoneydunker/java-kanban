@@ -107,7 +107,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             type = TaskType.EPIC;
         } else if (fields[1].equalsIgnoreCase("subtask") || fields[1].equalsIgnoreCase("task.subtask")) {
             type = TaskType.SUB_TASK;
-            if (fields.length < 6) {
+            if (fields.length < 7) {
                 epic = getEpics().get(Integer.parseInt(fields[5]));
             } else {
                 epic = getEpics().get(Integer.parseInt(fields[7]));
@@ -144,23 +144,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private String taskToString(Task task) {
         if (task.getStartTime() != null) {
-            return task.getId() + "," +
-                    task.getClass().getName().toLowerCase() + "," +
-                    task.getName() + "," +
-                    task.getStatus() + "," +
-                    task.getDescription() + "," +
-                    task.getStartTime().format(formatter) + "," +
-                    task.getDuration().toMinutes();
+            return task.getId() + "," + task.getClass().getName().toLowerCase() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription() + "," + task.getStartTime().format(formatter) + "," + task.getDuration().toMinutes();
         } else {
-            return task.getId() + "," +
-                    task.getClass().getName().toLowerCase() + "," +
-                    task.getName() + "," +
-                    task.getStatus() + "," +
-                    task.getDescription();
+            return task.getId() + "," + task.getClass().getName().toLowerCase() + "," + task.getName() + "," + task.getStatus() + "," + task.getDescription();
         }
     }
 
     private String taskToString(SubTask subTask) {
-            return taskToString((Task) subTask) + "," + subTask.getEpicId();
+        return taskToString((Task) subTask) + "," + subTask.getEpicId();
     }
 }
