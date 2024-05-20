@@ -19,6 +19,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(Task task) {
+        if (tasks.containsKey(task.getId())) {
+            updateTask(task);
+            return;
+        }
         if (task.getId() == 0) {
             generateId(task);
         }
@@ -26,7 +30,7 @@ public class InMemoryTaskManager implements TaskManager {
             Set<Task> prioritized = getPrioritizedTasks();
             Optional<Task> overlappingTask = prioritized.stream().filter(task1 -> task1.getStartTime() != null).filter(task1 -> (task1.getStartTime().isBefore(task.getEndTime()) && task1.getEndTime().isAfter(task.getStartTime())) || (task1.getStartTime().isAfter(task.getStartTime()) && task1.getEndTime().isBefore(task.getEndTime())) || (task1.getStartTime().isEqual(task.getStartTime()) || task1.getEndTime().isEqual(task.getEndTime()))).findAny();
             if (overlappingTask.isPresent()) {
-                throw new ManagerRuntimeException("Task overlapping exception");
+                throw new TaskOverlappingException("Task overlapping exception");
             }
             sortedTasks.add(task);
         }
@@ -35,6 +39,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void addTask(Epic epic) {
+        if (tasks.containsKey(epic.getId())) {
+            updateEpic(epic);
+            return;
+        }
         if (epic.getId() == 0) {
             generateId(epic);
         }
@@ -42,7 +50,7 @@ public class InMemoryTaskManager implements TaskManager {
             Set<Task> prioritized = getPrioritizedTasks();
             Optional<Task> overlappingTask = prioritized.stream().filter(task1 -> task1.getStartTime() != null).filter(task1 -> (task1.getStartTime().isBefore(epic.getEndTime()) && task1.getEndTime().isAfter(epic.getStartTime())) || (task1.getStartTime().isAfter(epic.getStartTime()) && task1.getEndTime().isBefore(epic.getEndTime())) || (task1.getStartTime().isEqual(epic.getStartTime()) || task1.getEndTime().isEqual(epic.getEndTime()))).findAny();
             if (overlappingTask.isPresent()) {
-                throw new ManagerRuntimeException("Task overlapping exception");
+                throw new TaskOverlappingException("Task overlapping exception");
             }
             sortedTasks.add(epic);
         }
@@ -56,28 +64,39 @@ public class InMemoryTaskManager implements TaskManager {
         }
         if (subTask.getStartTime() != null) {
             Set<SubTask> prioritizedSubTasks = epics.get(subTask.getEpicId()).getSortedSubTasks();
-            Optional<SubTask> overlappingSubTask = prioritizedSubTasks.stream().filter(task1 -> task1.getStartTime() != null).filter(task1 -> (task1.getStartTime().isBefore(subTask.getEndTime()) && task1.getEndTime().isAfter(subTask.getStartTime())) || (task1.getStartTime().isAfter(subTask.getStartTime()) && task1.getEndTime().isBefore(subTask.getEndTime())) || (task1.getStartTime().isEqual(subTask.getStartTime()) || task1.getEndTime().isEqual(subTask.getEndTime()))).findAny();
+            Optional<SubTask> overlappingSubTask = prioritizedSubTasks.stream()
+                    .filter(task1 -> task1.getStartTime() != null)
+                    .filter(task1 -> (task1.getStartTime().isBefore(subTask.getEndTime()) && task1.getEndTime().isAfter(subTask.getStartTime())) ||
+                            (task1.getStartTime().isAfter(subTask.getStartTime()) && task1.getEndTime().isBefore(subTask.getEndTime())) ||
+                            (task1.getStartTime().isEqual(subTask.getStartTime()) || task1.getEndTime().isEqual(subTask.getEndTime())))
+                    .findAny();
             if (overlappingSubTask.isPresent()) {
-                throw new ManagerRuntimeException("Task overlapping exception");
+                throw new TaskOverlappingException("Task overlapping exception");
             }
         }
         epics.get(subTask.getEpicId()).addSubTask(subTask);
         subTasks.put(subTask.getId(), subTask);
     }
 
+
     @Override
     public void addSubTaskToEpic(Epic epic, SubTask subTask) {
+        if (subTask.getId() == 0) {
+            generateId(subTask);
+        }
         epic.addSubTask(subTask);
         subTasks.put(subTask.getId(), subTask);
     }
 
     @Override
     public void updateTask(Task newTask) {
+        sortedTasks.remove(tasks.get(newTask.getId()));
+        tasks.remove(newTask.getId());
         if (newTask.getStartTime() != null) {
             Set<Task> prioritized = getPrioritizedTasks();
             Optional<Task> overlappingTask = prioritized.stream().filter(task1 -> task1.getStartTime() != null).filter(task1 -> (task1.getStartTime().isBefore(newTask.getEndTime()) && task1.getEndTime().isAfter(newTask.getStartTime())) || (task1.getStartTime().isAfter(newTask.getStartTime()) && task1.getEndTime().isBefore(newTask.getEndTime())) || (task1.getStartTime().isEqual(newTask.getStartTime()) || task1.getEndTime().isEqual(newTask.getEndTime()))).findAny();
             if (overlappingTask.isPresent()) {
-                throw new ManagerRuntimeException("Task overlapping exception");
+                throw new TaskOverlappingException("Task overlapping exception");
             }
             sortedTasks.add(newTask);
         }
@@ -93,11 +112,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void updateEpic(Epic epic) {
+        sortedTasks.remove(tasks.get(epic.getId()));
+        tasks.remove(epic.getId());
         if (epic.getStartTime() != null) {
             Set<Task> prioritized = getPrioritizedTasks();
             Optional<Task> overlappingTask = prioritized.stream().filter(task1 -> task1.getStartTime() != null).filter(task1 -> (task1.getStartTime().isBefore(epic.getEndTime()) && task1.getEndTime().isAfter(epic.getStartTime())) || (task1.getStartTime().isAfter(epic.getStartTime()) && task1.getEndTime().isBefore(epic.getEndTime())) || (task1.getStartTime().isEqual(epic.getStartTime()) || task1.getEndTime().isEqual(epic.getEndTime()))).findAny();
             if (overlappingTask.isPresent()) {
-                throw new ManagerRuntimeException("Task overlapping exception");
+                throw new TaskOverlappingException("Task overlapping exception");
             }
             sortedTasks.add(epic);
         }
