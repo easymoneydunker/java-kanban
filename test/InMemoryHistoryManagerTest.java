@@ -37,7 +37,7 @@ public class InMemoryHistoryManagerTest extends TaskManagerTest<InMemoryTaskMana
         inMemoryHistoryManager.add(task2);
         inMemoryHistoryManager.add(task3);
         inMemoryHistoryManager.add(task4);
-        inMemoryHistoryManager.remove(task3); // remove from the middle
+        inMemoryHistoryManager.remove(task3);
         Assertions.assertEquals(3, inMemoryHistoryManager.getHistory().size());
     }
 
